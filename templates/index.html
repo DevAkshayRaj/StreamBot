@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="/static/style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  </head>
+  <body>
+    <h1>Stream Bot</h1>
+    <div>
+      <div id="chatbox">
+        <p class="botText"><span>Hi! I'm Streambot.</span></p>
+      </div>
+      <div id="userInput">
+        <input id="textInput" type="text" name="msg" placeholder="Message">
+        <input id="buttonInput" type="submit" value="Send">
+      </div>
+      <script>
+	var rawText;
+        function getBotResponse() {
+          rawText = $("#textInput").val();
+          var userHtml = '<p class="userText"><span>' + rawText + '</span></p>';
+          $("#textInput").val("");
+          $("#chatbox").append(userHtml);
+          document.getElementById('userInput').scrollIntoView({block: 'start', behavior: 'smooth'});
+          $.get("/get", { msg: rawText }).done(function(data) {
+	    values=[]	 
+            if(data.includes("link"))
+	    values=data.split("link");
+	    else
+	    values[0]=data	
+	    var botHtml = '<p class="botText"><span>' + values[0] + '</span></p>';
+	    var music='<audio controls>  <source src="'+values[1]+'" type="audio/ogg"> <source src="'+values[1]+'" type="audio/mpeg">Your browser does not support the audio element.</audio>';
+            $("#chatbox").append(botHtml);
+		console.log(values[1]);
+		if(data.includes("required Music")&&!rawText.includes("turn on")&&!rawText.includes("Turn on")&&!rawText.includes("quit")){
+    		//console.log(str2 + " folk");
+		$("#chatbox").append(music);
+		}		
+            document.getElementById('userInput').scrollIntoView({block: 'start', behavior: 'smooth'});
+          });
+        }
+        $("#textInput").keypress(function(e) {
+            if ((e.which == 13) && document.getElementById("textInput").value != "" ){
+                getBotResponse();
+            }
+        });
+        $("#buttonInput").click(function() {
+            if (document.getElementById("textInput").value != "") {
+                getBotResponse();
+            }
+        })
+      </script>
+    </div>
+  </body>
+</html>
